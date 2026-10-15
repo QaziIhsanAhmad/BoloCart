@@ -1,1 +1,10 @@
-{"at":"2026-10-15T13:32:28Z","host":"cloudflare-workers-free","state":"error","error":{"step":"d1_list","message":"Cloudflare API code 7003: account ID not recognised (check CLOUDFLARE_ACCOUNT_ID)"}}
+{
+  "at": "2026-10-15T13:39:17+00:00",
+  "host": "cloudflare-workers-free",
+  "url": "https://bolocart.red-limit-875c.workers.dev",
+  "webhook": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp",
+  "healthz": 403,
+  "demo_redirect_ok": false,
+  "webhook_rejects_bad_token": true,
+  "state": "check-failed"
+}
