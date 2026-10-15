@@ -200,14 +200,17 @@ If the question is outside the information, or the customer is angry, wants a re
 STORE INFORMATION:
 ${KB}
 ${extra || ""}`;
-  try {
-    const r = await env.AI.run(env.AI_MODEL, { messages: [{ role: "system", content: system }, { role: "user", content: text.slice(0, 1500) }], max_tokens: 200 });
-    const out = (r?.response || "").trim();
-    return !out || out.includes("HANDOFF") ? "HANDOFF" : out;
-  } catch (e) {
-    await event(env, "error", `AI unavailable: ${e}`);
-    return "HANDOFF";
+  // Try each configured model in order, so a retired model falls back instead of failing.
+  for (const model of (env.AI_MODEL || "").split(",").map((m) => m.trim()).filter(Boolean)) {
+    try {
+      const r = await env.AI.run(model, { messages: [{ role: "system", content: system }, { role: "user", content: text.slice(0, 1500) }], max_tokens: 200 });
+      const out = (r?.response || "").trim();
+      return !out || out.includes("HANDOFF") ? "HANDOFF" : out;
+    } catch (e) {
+      await event(env, "error", `AI model ${model} failed: ${String(e).slice(0, 160)}`);
+    }
   }
+  return "HANDOFF";
 }
 
 export async function handleMessage(env, m) {

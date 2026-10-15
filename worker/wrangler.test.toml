@@ -12,7 +12,7 @@ STORE_NAME = "Demo Store"
 TEMPLATE_NAME = "cod_order_confirm"
 TEMPLATE_LANG = "ur"
 GRAPH_BASE = "http://127.0.0.1:9911/v25.0"
-AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
+AI_MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8,@cf/meta/llama-3.2-3b-instruct"
 DEMO_URL = "https://qaziihsanahmad.github.io/BoloCart/demo/"
 
 [[d1_databases]]
