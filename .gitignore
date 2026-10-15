@@ -3,3 +3,7 @@ __pycache__/
 .env
 data/
 ollama/
+node_modules/
+.wrangler/
+.dev.vars
+worker/deploy.log

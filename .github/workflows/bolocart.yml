@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      mode:
-        description: "deploy or check"
-        default: deploy
 
 permissions:
   contents: write
@@ -27,27 +23,44 @@ jobs:
       - run: pip install --quiet -r requirements.txt pytest
       - run: python -m pytest -q
       - run: python -m demo.run_demo
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Worker end-to-end test (local D1, mock WhatsApp API)
+        working-directory: worker
+        run: npm ci --silent && ./test/run.sh
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Deploy to Render (free) and verify
+      - run: npm ci --silent
+        working-directory: worker
+      - name: Deploy to Cloudflare Workers (free)
         env:
-          MODE: ${{ inputs.mode || 'deploy' }}
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           WA_TOKEN: ${{ secrets.WA_TOKEN }}
           WA_PHONE_NUMBER_ID: ${{ secrets.WA_PHONE_NUMBER_ID }}
           WA_WABA_ID: ${{ secrets.WA_WABA_ID }}
           WA_APP_SECRET: ${{ secrets.WA_APP_SECRET }}
           TEST_RECIPIENTS: ${{ secrets.TEST_RECIPIENTS }}
-        run: python deploy/deploy.py
+        run: ./deploy/cf_deploy.sh
+      - name: Verify from outside
+        if: env.skip != '1'
+        env:
+          WA_APP_SECRET: ${{ secrets.WA_APP_SECRET }}
+        run: python deploy/verify.py
       - name: Connect WhatsApp test number
+        if: env.skip != '1'
         env:
           WA_APP_ID: ${{ secrets.WA_APP_ID }}
           WA_APP_SECRET: ${{ secrets.WA_APP_SECRET }}

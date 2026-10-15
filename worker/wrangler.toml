@@ -1,0 +1,28 @@
+name = "bolocart"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[vars]
+SEND_MODE = "test"          # dry_run | test | live  (cost guard)
+LIVE_APPROVED = "no"        # must be "yes" before live sending
+MAX_TEMPLATES_PER_DAY = "20"
+NO_REPLY_HOURS = "24"
+STORE_NAME = "Demo Store"
+TEMPLATE_NAME = "cod_order_confirm"
+TEMPLATE_LANG = "ur"
+GRAPH_BASE = "https://graph.facebook.com/v25.0"
+AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
+DEMO_URL = "https://qaziihsanahmad.github.io/BoloCart/demo/"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bolocart"
+database_id = "00000000-0000-0000-0000-000000000000"  # replaced by CI with the real id
+migrations_dir = "migrations"
+
+[ai]
+binding = "AI"
+
+[triggers]
+crons = ["17 * * * *"]   # hourly: mark unanswered orders as no-reply

@@ -34,14 +34,14 @@ python -m pytest -q          # 37 tests
 python -m demo.run_demo      # sample orders through the real agent, simulated network
 ```
 
-## Deploy (free)
-Hosting: Render free web service (Docker), created from `render.yaml`. Free instances sleep after 15 minutes without traffic and take about a minute to wake; the filesystem is temporary, so the SQLite log resets on restart (fine for testing).
+## Deploy (free): Cloudflare Workers
+The hosted agent is `worker/` — a Cloudflare Worker (free plan, no sleep) with D1 for storage, Workers AI's free daily allowance for FAQ answers (human handoff when unavailable), and an hourly cron that marks unanswered orders. Free-plan limits (Cloudflare docs): 100,000 requests/day, 10 ms CPU per request (waiting on the network doesn't count), D1 5 GB, Workers AI 10,000 neurons/day.
 
-GitHub Actions (`.github/workflows/bolocart.yml`) runs the tests, then sets the service's environment through the Render API, deploys, and checks the health page, the demo and the webhook handshake from outside. Results go to `deploy/status/`.
+GitHub Actions runs the Python tests, the sample-order demo and a Worker end-to-end test (local D1 + mock WhatsApp API), then deploys with Wrangler and checks the live Worker from outside. Results go to `deploy/status/`.
 
-Repository secrets: `RENDER_API_KEY`. For the WhatsApp test number also `WA_APP_ID`, `WA_APP_SECRET`, `WA_TOKEN`, `WA_PHONE_NUMBER_ID`, `WA_WABA_ID`, `TEST_RECIPIENTS`. The webhook verify token and health key are derived from the app secret, so they are never stored in the repo.
-The service always runs with `SEND_MODE=test` and `LIVE_APPROVED=no`.
+Repository secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. For the WhatsApp test number also `WA_APP_ID`, `WA_APP_SECRET`, `WA_TOKEN`, `WA_PHONE_NUMBER_ID`, `WA_WABA_ID`, `TEST_RECIPIENTS`. The webhook verify token and health key are derived from the app secret and never stored in the repo. The Worker always runs with `SEND_MODE=test`, `LIVE_APPROVED=no`.
 
 Public demo (static): https://qaziihsanahmad.github.io/BoloCart/demo/
 
+The Python app in `app/` is the same agent for self-hosting.
 Self-hosting on your own server: `./install.sh` (Docker, optional local LLM via Ollama).
