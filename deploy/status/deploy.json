@@ -1,4 +1,13 @@
 {
-  "at": "2026-10-15T08:16:18+00:00",
-  "state": "waiting: GitHub secret HF_TOKEN is not set"
+  "at": "2026-10-15T11:11:55+00:00",
+  "space": "https://huggingface.co/spaces/Qazi12/bolocart",
+  "url": "https://qazi12-bolocart.hf.space",
+  "demo": "https://qazi12-bolocart.hf.space/demo",
+  "webhook": "https://qazi12-bolocart.hf.space/webhook/whatsapp",
+  "state": "error",
+  "error": {
+    "step": "create_space",
+    "type": "HfHubHTTPError",
+    "message": "Client error '402 Payment Required' for url 'https://huggingface.co/api/repos/create' (Request ID: Root=1-6ad0b4fb-5067f8973bcafe6664c84fa3;9a96ef08-ef77-432a-9918-ba70aa268945)\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402\n\nStatic Spaces are free for everyone, but hosting Gradio and Docker Spaces on free cpu-basic requires a PRO subscription. Subscribe a"
+  }
 }
