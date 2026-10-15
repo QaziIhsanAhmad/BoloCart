@@ -1,10 +1,11 @@
 {
-  "at": "2026-10-15T13:39:17+00:00",
+  "at": "2026-10-15T13:42:52+00:00",
   "host": "cloudflare-workers-free",
   "url": "https://bolocart.red-limit-875c.workers.dev",
   "webhook": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp",
-  "healthz": 403,
-  "demo_redirect_ok": false,
+  "healthz": 200,
+  "mode": "test",
+  "demo_redirect_ok": true,
   "webhook_rejects_bad_token": true,
-  "state": "check-failed"
+  "state": "ok"
 }
