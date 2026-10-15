@@ -10,7 +10,7 @@ if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; th
   echo "skip=1" >> "$GITHUB_ENV"; exit 0
 fi
 fail() {
-  MSG=$(grep -ihE "error|code|permission|auth" wrangler.err 2>/dev/null | sed 's/[^[:print:]]//g; s/"/'"'"'/g' | head -4 | tr '\n' ' ' | cut -c1-400)
+  MSG=$(grep -ihE "error|code|permission|auth" wrangler.err 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g; s/[^[:print:]]//g; s/"/'"'"'/g; s#accounts/[0-9a-zA-Z]*#accounts/<id>#g' | head -4 | tr '\n' ' ' | cut -c1-400)
   printf '{"at":"%s","host":"cloudflare-workers-free","state":"error","error":{"step":"%s","message":"%s"}}\n' "$(now)" "$1" "$MSG" > $STATUS; exit 1; }
 
 # D1 database: reuse if it exists, otherwise create it
