@@ -293,8 +293,14 @@ export default {
     if (p === "/webhook/whatsapp" && req.method === "POST") {
       const raw = new Uint8Array(await req.arrayBuffer());
       const good = env.WA_APP_SECRET ? "sha256=" + (await hmac(env.WA_APP_SECRET, raw, "hex")) : "";
-      if (!safeEq(req.headers.get("x-hub-signature-256") || "", good)) return new Response("unauthorized", { status: 401 });
+      if (!safeEq(req.headers.get("x-hub-signature-256") || "", good)) {
+        await event(env, "warn", `Webhook POST rejected: bad signature (${raw.length} bytes, ua=${(req.headers.get("user-agent") || "").slice(0, 40)})`);
+        return new Response("unauthorized", { status: 401 });
+      }
       const data = JSON.parse(new TextDecoder().decode(raw) || "{}");
+      const counts = (data.entry || []).flatMap((e) => e.changes || []).reduce((a, c) => {
+        a.m += (c.value?.messages || []).length; a.s += (c.value?.statuses || []).length; return a; }, { m: 0, s: 0 });
+      await event(env, "info", `Webhook received: ${counts.m} message(s), ${counts.s} status update(s)`);
       const jobs = [];
       for (const entry of data.entry || []) for (const ch of entry.changes || []) {
         const v = ch.value || {};
