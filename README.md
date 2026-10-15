@@ -35,9 +35,13 @@ python -m demo.run_demo      # sample orders through the real agent, simulated n
 ```
 
 ## Deploy (free)
-GitHub Actions (`.github/workflows/bolocart.yml`) runs the tests, then deploys to a free Hugging Face Docker Space and checks the demo page and the webhook handshake. Results are written to `deploy/status/`.
+Hosting: Render free web service (Docker), created from `render.yaml`. Free instances sleep after 15 minutes without traffic and take about a minute to wake; the filesystem is temporary, so the SQLite log resets on restart (fine for testing).
 
-Repository secrets: `HF_TOKEN` (Hugging Face write token). For the WhatsApp test number also `WA_APP_ID`, `WA_APP_SECRET`, `WA_TOKEN`, `WA_PHONE_NUMBER_ID`, `WA_WABA_ID`, `TEST_RECIPIENTS`.
-The Space always runs with `SEND_MODE=test` and `LIVE_APPROVED=no`.
+GitHub Actions (`.github/workflows/bolocart.yml`) runs the tests, then sets the service's environment through the Render API, deploys, and checks the health page, the demo and the webhook handshake from outside. Results go to `deploy/status/`.
+
+Repository secrets: `RENDER_API_KEY`. For the WhatsApp test number also `WA_APP_ID`, `WA_APP_SECRET`, `WA_TOKEN`, `WA_PHONE_NUMBER_ID`, `WA_WABA_ID`, `TEST_RECIPIENTS`. The webhook verify token and health key are derived from the app secret, so they are never stored in the repo.
+The service always runs with `SEND_MODE=test` and `LIVE_APPROVED=no`.
+
+Public demo (static): https://qaziihsanahmad.github.io/BoloCart/demo/
 
 Self-hosting on your own server: `./install.sh` (Docker, optional local LLM via Ollama).

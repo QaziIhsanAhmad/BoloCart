@@ -1,8 +1,14 @@
+import hashlib
 import os
 
 
 def _env(k, d=""):
     return os.getenv(k, d).strip()
+
+
+def _derive(secret, purpose):
+    """Stable value derived from the app secret, so deploy tooling can compute it without storing it."""
+    return hashlib.sha256(f"{secret}:{purpose}".encode()).hexdigest()[:24] if secret else ""
 
 
 class Settings:
@@ -19,7 +25,7 @@ class Settings:
         self.WA_PHONE_NUMBER_ID = _env("WA_PHONE_NUMBER_ID")
         self.WA_WABA_ID = _env("WA_WABA_ID")
         self.WA_APP_SECRET = _env("WA_APP_SECRET")
-        self.WA_VERIFY_TOKEN = _env("WA_VERIFY_TOKEN")
+        self.WA_VERIFY_TOKEN = _env("WA_VERIFY_TOKEN") or _derive(self.WA_APP_SECRET, "verify")
         self.GRAPH_VERSION = _env("GRAPH_VERSION", "v25.0")
         self.TEMPLATE_NAME = _env("TEMPLATE_NAME", "cod_order_confirm")
         self.TEMPLATE_LANG = _env("TEMPLATE_LANG", "ur")
@@ -40,7 +46,7 @@ class Settings:
         self.KB_PATH = _env("KB_PATH", "kb/demo.md")
 
         self.DB_PATH = _env("DB_PATH", "data/agent.db")
-        self.HEALTH_KEY = _env("HEALTH_KEY")  # optional key for detailed /healthz
+        self.HEALTH_KEY = _env("HEALTH_KEY") or _derive(self.WA_APP_SECRET, "health")
 
 
 S = Settings()

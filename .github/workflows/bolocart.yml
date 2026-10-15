@@ -37,11 +37,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install --quiet huggingface_hub
-      - name: Deploy to Hugging Face Space and verify
+      - name: Deploy to Render (free) and verify
         env:
           MODE: ${{ inputs.mode || 'deploy' }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           WA_TOKEN: ${{ secrets.WA_TOKEN }}
           WA_PHONE_NUMBER_ID: ${{ secrets.WA_PHONE_NUMBER_ID }}
           WA_WABA_ID: ${{ secrets.WA_WABA_ID }}
