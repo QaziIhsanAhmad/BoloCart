@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive demo: Urdu WhatsApp confirmation for cash-on-delivery orders, by Xenova Solutions. Sample orders only.">
+<title>BoloCart COD Agent</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap">
+<style>
+/* Layout: three working panes — order feed | customer's WhatsApp | store + results — stacking to one column on phones */
+:root{
+  --bg:#f3f4f1; --surface:#ffffff; --ink:#16232b; --muted:#5d6b70; --line:#d9ded9;
+  --teal:#0f5c5a; --teal-soft:#dcebe8; --marigold:#e0a12a; --marigold-soft:#fbefd6;
+  --chat:#e9efe6; --bubble-in:#ffffff; --bubble-out:#d8f1e4;
+  --ok:#1f7a4d; --warn:#b26a00; --bad:#b03a2e; --idle:#6b7680;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --urdu:"Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Urdu Typesetting", serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1517; --surface:#162024; --ink:#e6ecea; --muted:#9aa8ab; --line:#2a383c;
+  --teal:#5cc3bd; --teal-soft:#16353a; --marigold:#f0b94d; --marigold-soft:#3a2f17;
+  --chat:#0c1a17; --bubble-in:#1b2a2e; --bubble-out:#14463a;
+  --ok:#5fcf93; --warn:#f0b94d; --bad:#ef8a7c; --idle:#9aa8ab; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1517; --surface:#162024; --ink:#e6ecea; --muted:#9aa8ab; --line:#2a383c;
+  --teal:#5cc3bd; --teal-soft:#16353a; --marigold:#f0b94d; --marigold-soft:#3a2f17;
+  --chat:#0c1a17; --bubble-in:#1b2a2e; --bubble-out:#14463a;
+  --ok:#5fcf93; --warn:#f0b94d; --bad:#ef8a7c; --idle:#9aa8ab; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:22px}
+header{display:grid;gap:10px}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+h1{font:700 clamp(28px,4.4vw,46px)/1.05 var(--display);margin:0;text-wrap:balance;max-width:20ch}
+h1 span{color:var(--teal)}
+.lede{color:var(--muted);max-width:64ch;margin:0}
+.notice{display:inline-flex;gap:8px;align-items:center;font:500 12.5px/1.3 var(--mono);
+  background:var(--marigold-soft);color:var(--ink);border:1px solid var(--marigold);padding:6px 10px;border-radius:6px;width:fit-content}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:980px){.grid{grid-template-columns:minmax(0,1fr)}}
+.pane{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:12px;min-width:0}
+.pane h2{font:700 17px/1.2 var(--display);margin:0;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pane h2 small{font:400 12px var(--mono);color:var(--muted)}
+button{font:600 13.5px var(--body);border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  padding:8px 12px;cursor:pointer}
+button:hover{border-color:var(--teal)}
+button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+button.primary{background:var(--teal);color:var(--surface);border-color:var(--teal)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.orders{display:grid;gap:8px}
+.order{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 12px;border:1px solid var(--line);
+  border-radius:9px;cursor:pointer;background:var(--surface);text-align:left;width:100%}
+.order[aria-pressed="true"]{border-color:var(--teal);box-shadow:inset 3px 0 0 var(--teal)}
+.order b{font:600 14px var(--body)}
+.order .meta{grid-column:1/-1;color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums}
+.pill{font:500 11px/1 var(--mono);padding:5px 7px;border-radius:99px;white-space:nowrap;align-self:start;border:1px solid currentColor}
+.s-pending{color:var(--warn)} .s-confirmed{color:var(--ok)} .s-cancel{color:var(--bad)}
+.s-noreply{color:var(--idle)} .s-prepaid{color:var(--teal)}
+.phone{border-radius:22px;border:1px solid var(--line);overflow:hidden;background:var(--chat);display:grid;grid-template-rows:auto 1fr auto;min-height:520px}
+.phone-top{background:var(--teal);color:var(--surface);padding:10px 14px;display:flex;gap:10px;align-items:center}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--teal);display:grid;place-items:center;font:700 13px var(--display)}
+.phone-top div{line-height:1.2}.phone-top small{opacity:.8;font-size:12px}
+.chat{padding:14px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:440px}
+.msg{max-width:85%;padding:8px 10px;border-radius:10px;font-size:14px;box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.msg.bot{background:var(--bubble-in);align-self:flex-start;border-top-left-radius:2px}
+.msg.cust{background:var(--bubble-out);align-self:flex-end;border-top-right-radius:2px}
+.msg.sys{align-self:center;background:transparent;box-shadow:none;color:var(--muted);font:500 11.5px var(--mono);text-align:center}
+.ur{font-family:var(--urdu);direction:rtl;text-align:right;line-height:2.1;font-size:15px}
+.tbtns{display:grid;gap:4px;margin-top:6px;border-top:1px solid var(--line);padding-top:6px}
+.tbtns span{color:var(--teal);font-family:var(--urdu);text-align:center;font-size:14px;line-height:2}
+.voice{display:flex;align-items:center;gap:8px;font:500 12.5px var(--mono)}
+.voice i{display:block;height:4px;width:110px;border-radius:2px;background:linear-gradient(90deg,var(--teal) 40%,var(--line) 40%)}
+.time{display:block;font:400 10.5px var(--mono);color:var(--muted);text-align:right;margin-top:2px;direction:ltr}
+.actions{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--surface);border-top:1px solid var(--line)}
+.actions button{font-size:12.5px;padding:7px 10px}
+.label{font:500 11px/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:500 12px var(--mono);background:var(--teal-soft);color:var(--ink);padding:4px 8px;border-radius:5px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.stat{border:1px solid var(--line);border-radius:9px;padding:10px}
+.stat b{display:block;font:700 26px/1 var(--display);font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.stat.hero{grid-column:1/-1;background:var(--marigold-soft);border-color:var(--marigold)}
+.assume{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.assume input{width:84px;font:500 13px var(--mono);padding:5px 7px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.log{font:400 12px/1.6 var(--mono);color:var(--muted);max-height:150px;overflow-y:auto;border-top:1px dashed var(--line);padding-top:8px}
+.how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:820px){.how{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:460px){.how{grid-template-columns:minmax(0,1fr)}}
+.how div{border-top:2px solid var(--teal);padding-top:8px;font-size:13.5px}
+.how b{display:block;font:700 15px var(--display);margin-bottom:2px}
+footer{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;border-top:1px solid var(--line);padding-top:16px;font-size:13.5px}
+footer code{font:500 13px var(--mono);user-select:all}
+footer a{color:var(--teal)}
+@media (prefers-reduced-motion:no-preference){.msg{animation:pop .18s ease-out}@keyframes pop{from{transform:translateY(4px);opacity:.4}to{transform:none;opacity:1}}}
+</style>
+
+<style>body{margin:0}</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Xenova Solutions · BoloCart</div>
+    <h1>Every COD order confirmed on WhatsApp, <span>in Urdu</span>, before it ships.</h1>
+    <p class="lede">A new cash-on-delivery order triggers a WhatsApp message in Urdu. The customer taps confirm, types “haan”, or sends a voice note. The order is tagged in your store, so fake and abandoned orders never reach the courier.</p>
+    <div class="notice">Interactive demo · sample orders · no real messages are sent</div>
+  </header>
+
+  <section class="grid" aria-label="Live demo">
+    <div class="pane">
+      <h2>Incoming orders <small id="orderCount"></small></h2>
+      <div class="orders" id="orders" role="list"></div>
+      <button class="primary" id="newOrder" type="button">Add a sample COD order</button>
+    </div>
+
+    <div class="pane" style="padding:10px">
+      <div class="phone">
+        <div class="phone-top"><div class="avatar" id="av">A</div><div><b id="custName">Customer</b><br><small id="custPhone"></small></div></div>
+        <div class="chat" id="chat" aria-live="polite"></div>
+        <div class="actions" id="actions">
+          <button type="button" data-act="tap">Taps “Confirm”</button>
+          <button type="button" data-act="haan">Types “haan ji”</button>
+          <button type="button" data-act="nahi">Types “nahi chahiye”</button>
+          <button type="button" data-act="ask">Asks the price</button>
+          <button type="button" data-act="where">“Order kab aayega?”</button>
+          <button type="button" data-act="voice">Sends a voice note</button>
+          <button type="button" data-act="refund">Asks for a refund</button>
+          <button type="button" data-act="wait">No reply for 24h</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane">
+      <h2>In your store</h2>
+      <div>
+        <div class="label">Selected order</div>
+        <dl class="kv" id="detail"></dl>
+      </div>
+      <div><div class="label" style="margin-bottom:6px">Order tags</div><div class="tags" id="tags"></div></div>
+      <div class="stats">
+        <div class="stat hero"><b id="sAvoid">Rs 0</b><span>estimated courier cost avoided on parcels held back</span></div>
+        <div class="stat"><b id="sConf">0%</b><span>COD orders confirmed</span></div>
+        <div class="stat"><b id="sHeld">0</b><span>parcels held back (cancel or no reply)</span></div>
+        <div class="stat"><b id="sAuto">0</b><span>questions answered automatically</span></div>
+        <div class="stat"><b id="sHuman">0</b><span>handed to your team</span></div>
+      </div>
+      <label class="assume" for="rto">Assumed cost of one failed COD delivery (both ways) Rs <input id="rto" type="number" min="0" step="10" value="400"></label>
+      <div class="log" id="log" aria-label="Activity log"></div>
+    </div>
+  </section>
+
+  <section class="how" aria-label="How it works">
+    <div><b>Order placed</b>Your store sends the new COD order to the agent the moment it is created.</div>
+    <div><b>Urdu confirmation</b>An approved WhatsApp template with Confirm and Cancel buttons goes to the buyer.</div>
+    <div><b>Any reply works</b>Buttons, Roman Urdu, Urdu script, and questions about price, products or delivery.</div>
+    <div><b>Store updated</b>Orders are tagged Confirmed, Cancel requested or No reply. Refunds and complaints go to your team.</div>
+  </section>
+
+  <footer>
+    <b>Run a free pilot on your store</b>
+    <span>Email <code>services@xenovasolutions.com</code></span>
+    <span>WhatsApp <code>+92 301 9677488</code></span>
+    <a href="https://xenovasolutions.com" target="_blank" rel="noopener">xenovasolutions.com</a>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const CONFIRM_T = (n, o, t) => `السلام علیکم ${n}! ڈیمو اسٹور سے آپ کا آرڈر ${o} موصول ہو گیا ہے۔ کل رقم Rs ${t} (کیش آن ڈیلیوری)۔ براہِ کرم نیچے بٹن دبا کر آرڈر کی تصدیق کریں تاکہ ہم اسے روانہ کر سکیں۔`;
+  const MSG_OK = o => `شکریہ! آپ کا آرڈر ${o} کنفرم ہو گیا ہے اور جلد روانہ کر دیا جائے گا۔`;
+  const MSG_CANCEL = o => `آپ کا آرڈر ${o} منسوخ کرنے کی درخواست موصول ہو گئی ہے۔ اگر یہ غلطی سے ہوا ہے تو یہیں بتا دیں۔`;
+  const MSG_HAND = "شکریہ! ہماری ٹیم جلد آپ سے رابطہ کرے گی۔";
+  const PEOPLE = [["Ayesha","0323-4470001","Vitamin C Serum",1799],["Bilal","+92 300 1112222","3-in-1 Serum Set",4799],
+    ["Sana","0345 1234567","Bright Monster Serum ×2",3598],["Usman","03219876543","Anti-Acne Serum",1799],
+    ["Hira","0333-1231234","Anti-Acne Serum",1799],["Zain","0301 5556677","3-in-1 Serum Set",4799],
+    ["Maryam","0312-4445566","Vitamin C Serum ×2",3598],["Hamza","0300 9988776","Bright Monster Serum",1799]];
+  const S = {orders:[], sel:null, auto:0, human:0, n:3000, next:0};
+  const $ = id => document.getElementById(id);
+  const fmt = v => v.toLocaleString("en-PK");
+  const wa = p => "92" + p.replace(/\D/g,"").replace(/^0092|^92|^0/,"");
+  const now = () => new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  const STAT = {pending:["Awaiting reply","s-pending"],confirmed:["Confirmed","s-confirmed"],cancel:["Cancel requested","s-cancel"],
+    noreply:["No reply","s-noreply"],prepaid:["Prepaid, skipped","s-prepaid"]};
+
+  function log(t){const d=document.createElement("div");d.textContent=`${now()}  ${t}`;$("log").prepend(d);}
+  function addOrder(prepaid=false){
+    const p = PEOPLE[S.next++ % PEOPLE.length]; S.n++;
+    const o = {id:S.n,name:"#"+S.n,first:p[0],phone:p[1],item:p[2],total:p[3],status:prepaid?"prepaid":"pending",
+      tags:prepaid?[]:["WA-Pending"],chat:[]};
+    if(!prepaid){o.chat.push({who:"bot",ur:true,text:CONFIRM_T(o.first,o.name,fmt(o.total)),buttons:true});
+      log(`${o.name} COD → Urdu confirmation sent to ${wa(o.phone)}`);}
+    else log(`${o.name} prepaid → no message needed`);
+    S.orders.unshift(o); S.sel=o.id; render();
+  }
+  function cur(){return S.orders.find(o=>o.id===S.sel);}
+  function resolve(o, d){
+    if(o.status!=="pending"){o.chat.push({who:"sys",text:"order already "+STAT[o.status][0].toLowerCase()});return;}
+    if(d==="ok"){o.status="confirmed";o.tags=["WA-Confirmed"];o.chat.push({who:"bot",ur:true,text:MSG_OK(o.name)});log(`${o.name} confirmed → tag WA-Confirmed`);}
+    else{o.status="cancel";o.tags=["WA-CancelRequested"];o.chat.push({who:"bot",ur:true,text:MSG_CANCEL(o.name)});log(`${o.name} cancel requested → held for your review`);}
+  }
+  const ACT = {
+    tap:o=>{o.chat.push({who:"cust",ur:true,text:"آرڈر کی تصدیق کریں"});resolve(o,"ok");},
+    haan:o=>{o.chat.push({who:"cust",text:"haan ji"});resolve(o,"ok");},
+    nahi:o=>{o.chat.push({who:"cust",text:"nahi chahiye"});resolve(o,"cancel");},
+    ask:o=>{o.chat.push({who:"cust",text:"anti acne serum ki price kya hai?"});
+      o.chat.push({who:"bot",text:"Anti-Acne Serum ki qeemat Rs 1,799 hai. Yeh oily aur acne-prone skin ke liye hai. Pehli dafa istemal se pehle patch test zaroor karein."});S.auto++;log(`${o.name} product question answered`);},
+    where:o=>{o.chat.push({who:"cust",text:"mera order kab aayega?"});
+      const st=o.status==="confirmed"?"confirm ho chuka hai aur dispatch ke liye tayyar hai":o.status==="pending"?"abhi confirmation ka intezar hai. Upar diye gaye button se confirm kar dein":"hold par hai";
+      o.chat.push({who:"bot",text:`Aap ka order ${o.name} ${st}.`});S.auto++;log(`${o.name} status question answered from the store`);},
+    voice:o=>{o.chat.push({who:"cust",voice:"0:06"});o.chat.push({who:"sys",text:"preview: voice note transcribed → “bhai order kab tak milega”"});
+      o.chat.push({who:"bot",text:`Aap ka order ${o.name} ${o.status==="confirmed"?"confirm hai, 2 se 4 working days mein pohanch jayega (sample delivery time)":"confirmation ke baad dispatch hoga"}.`});S.auto++;log(`${o.name} voice note handled (preview feature)`);},
+    refund:o=>{o.chat.push({who:"cust",text:"mujhe refund chahiye"});o.chat.push({who:"bot",ur:true,text:MSG_HAND});S.human++;log(`${o.name} refund request → handed to your team`);},
+    wait:o=>{o.chat.push({who:"sys",text:"24 hours pass with no reply"});
+      if(o.status==="pending"){o.status="noreply";o.tags=["WA-NoReply"];log(`${o.name} no reply in 24h → tag WA-NoReply, not dispatched`);}}
+  };
+  function bubble(m){
+    const d=document.createElement("div");d.className="msg "+m.who;
+    if(m.voice){d.innerHTML=`<div class="voice">▶ <i></i> ${m.voice}</div>`;}
+    else{const t=document.createElement("div");if(m.ur)t.className="ur";t.textContent=m.text;d.append(t);}
+    if(m.buttons){const b=document.createElement("div");b.className="tbtns";b.innerHTML="<span>آرڈر کی تصدیق کریں</span><span>آرڈر منسوخ کریں</span>";d.append(b);}
+    if(m.who!=="sys"){const s=document.createElement("span");s.className="time";s.textContent=m.at||(m.at=now());d.append(s);}
+    return d;
+  }
+  function render(){
+    const list=$("orders");list.innerHTML="";
+    S.orders.forEach(o=>{const b=document.createElement("button");b.type="button";b.className="order";b.setAttribute("role","listitem");
+      b.setAttribute("aria-pressed",String(o.id===S.sel));
+      b.innerHTML=`<b>${o.name} · ${o.first}</b><span class="pill ${STAT[o.status][1]}">${STAT[o.status][0]}</span><span class="meta">${o.item} · Rs ${fmt(o.total)} · ${o.status==="prepaid"?"Card":"COD"}</span>`;
+      b.onclick=()=>{S.sel=o.id;render();};list.append(b);});
+    $("orderCount").textContent=`${S.orders.length} orders`;
+    const o=cur(); const chat=$("chat");chat.innerHTML="";
+    if(o){$("custName").textContent=o.first;$("av").textContent=o.first[0];$("custPhone").textContent="+"+wa(o.phone);
+      if(!o.chat.length)chat.append(bubble({who:"sys",text:"prepaid order · no confirmation needed"}));
+      o.chat.forEach(m=>chat.append(bubble(m)));chat.scrollTop=chat.scrollHeight;
+      $("detail").innerHTML="";[["Order",o.name],["Customer",o.first],["Phone as typed",o.phone],["WhatsApp ID",wa(o.phone)],["Items",o.item],["Total","Rs "+fmt(o.total)],["Status",STAT[o.status][0]]]
+        .forEach(([k,v])=>{const dt=document.createElement("dt");dt.textContent=k;const dd=document.createElement("dd");dd.textContent=v;$("detail").append(dt,dd);});
+      $("tags").innerHTML="";(o.tags.length?o.tags:["—"]).forEach(t=>{const s=document.createElement("span");s.className="tag";s.textContent=t;$("tags").append(s);});
+      document.querySelectorAll("#actions button").forEach(b=>b.disabled=o.status==="prepaid");}
+    const cod=S.orders.filter(x=>x.status!=="prepaid");const conf=cod.filter(x=>x.status==="confirmed").length;
+    const held=cod.filter(x=>x.status==="cancel"||x.status==="noreply").length;
+    $("sConf").textContent=cod.length?Math.round(conf/cod.length*100)+"%":"0%";$("sHeld").textContent=held;
+    $("sAuto").textContent=S.auto;$("sHuman").textContent=S.human;
+    let rto=400;try{rto=Math.max(0,Number($("rto").value)||0);}catch(e){}
+    $("sAvoid").textContent="Rs "+fmt(held*rto);
+  }
+  $("actions").addEventListener("click",e=>{const b=e.target.closest("button[data-act]");const o=cur();if(!b||!o)return;ACT[b.dataset.act](o);render();});
+  $("newOrder").onclick=()=>addOrder(false);
+  $("rto").addEventListener("input",render);
+  // Realistic starting state: a few sample orders already handled
+  addOrder(true); addOrder(); ACT.nahi(cur()); addOrder(); ACT.tap(cur()); ACT.ask(cur()); addOrder();
+  render();
+})();
+</script>
+
+</body>
+</html>

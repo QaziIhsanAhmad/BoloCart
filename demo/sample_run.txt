@@ -1,0 +1,54 @@
+
+=== 1. New orders arrive from the store ===
+
+ ORDER #2001  Rs 1799.00  Cash on Delivery (COD)  phone '0323-4470001'
+   BOT -> 923234470001: [template] Salam Ayesha, order #2001, Rs 1,799 (COD) [Confirm] [Cancel]
+   SHOPIFY tag 2001 + ['WA-Pending']
+
+ ORDER #2002  Rs 4799.00  Cash on Delivery (COD)  phone '+92 300 1112222'
+   BOT -> 923001112222: [template] Salam Bilal, order #2002, Rs 4,799 (COD) [Confirm] [Cancel]
+   SHOPIFY tag 2002 + ['WA-Pending']
+
+ ORDER #2003  Rs 3598.00  Cash on Delivery (COD)  phone '03451234567'
+   BOT -> 923451234567: [template] Salam Sana, order #2003, Rs 3,598 (COD) [Confirm] [Cancel]
+   SHOPIFY tag 2003 + ['WA-Pending']
+
+ ORDER #2004  Rs 1799.00  Cash on Delivery (COD)  phone '03219876543'
+   BOT -> 923219876543: [template] Salam Usman, order #2004, Rs 1,799 (COD) [Confirm] [Cancel]
+   SHOPIFY tag 2004 + ['WA-Pending']
+
+ ORDER #2005  Rs 1799.00  Bank Deposit  phone '03331231234'
+
+=== 2. Customers reply on WhatsApp ===
+
+ CUSTOMER 923234470001: [taps Confirm]
+   SHOPIFY tag 2001 + ['WA-Confirmed']
+   BOT -> 923234470001: شکریہ! آپ کا آرڈر #2001 کنفرم ہو گیا ہے اور جلد روانہ کر دیا جائے گا۔
+
+ CUSTOMER 923001112222: nahi mujhe nahi chahiye
+   SHOPIFY tag 2002 + ['WA-CancelRequested']
+   BOT -> 923001112222: آپ کا آرڈر #2002 منسوخ کرنے کی درخواست موصول ہو گئی ہے۔ اگر یہ غلطی سے ہوا ہے تو یہیں بتا دیں۔
+
+ CUSTOMER 923451234567: Haan
+   SHOPIFY tag 2003 + ['WA-Confirmed']
+   BOT -> 923451234567: شکریہ! آپ کا آرڈر #2003 کنفرم ہو گیا ہے اور جلد روانہ کر دیا جائے گا۔
+
+=== 3. Customer questions ===
+
+ CUSTOMER 923451234567: anti acne serum ki price kya hai?
+   BOT -> 923451234567: Anti-Acne Serum ki qeemat Rs 1,799 hai. Yeh oily aur acne-prone skin ke liye hai.
+
+ CUSTOMER 923451234567: mera order kab aayega?
+   BOT -> 923451234567: Aap ka order #2003 confirm ho chuka hai aur abhi dispatch ka intezar hai.
+
+ CUSTOMER 923451234567: mujhe refund chahiye
+   BOT -> 923451234567: شکریہ! ہماری ٹیم جلد آپ سے رابطہ کرے گی۔
+
+=== 4. 24 hours later: no-reply sweep ===
+   SHOPIFY tag 2004 + ['WA-NoReply']
+
+=== 5. Result ===
+ Orders by status: {'cancel_requested': 1, 'confirmed': 2, 'no_reply': 1, 'skipped_prepaid': 1}
+ Handoffs to a human: ['923451234567: mujhe refund chahiye']
+
+DEMO PASSED
