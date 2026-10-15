@@ -1,4 +1,23 @@
 {
-  "at": "2026-10-15T13:42:52+00:00",
-  "state": "waiting: WA_APP_ID, WA_APP_SECRET, WA_TOKEN, WA_WABA_ID"
+  "at": "2026-10-15T14:21:21+00:00",
+  "webhook_subscription": {
+    "http": 200,
+    "ok": true,
+    "error": null
+  },
+  "waba_subscribed": {
+    "http": 200,
+    "ok": true,
+    "error": null
+  },
+  "template": [
+    {
+      "name": "cod_order_confirm",
+      "status": "PENDING",
+      "category": "UTILITY",
+      "language": "ur",
+      "id": "1422342816015598"
+    }
+  ],
+  "state": "connected"
 }

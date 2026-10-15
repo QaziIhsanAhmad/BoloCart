@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-15T13:42:52+00:00",
+  "at": "2026-10-15T14:21:15+00:00",
   "host": "cloudflare-workers-free",
   "url": "https://bolocart.red-limit-875c.workers.dev",
   "webhook": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp",
@@ -7,5 +7,13 @@
   "mode": "test",
   "demo_redirect_ok": true,
   "webhook_rejects_bad_token": true,
+  "webhook_verify_ok": true,
+  "template": "submitted:PENDING",
+  "stats": {
+    "orders": {},
+    "out_24h": {},
+    "billing_7d": []
+  },
+  "recent_events": [],
   "state": "ok"
 }
