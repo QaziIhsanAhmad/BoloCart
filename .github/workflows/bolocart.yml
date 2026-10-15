@@ -74,5 +74,6 @@ jobs:
           git config user.email "noreply@anthropic.com"
           git add deploy/status
           git diff --cached --quiet && exit 0
+          git checkout -- worker/wrangler.toml 2>/dev/null || true
           git commit -m "Deploy status $(date -u +%FT%H:%MZ) [skip ci]"
-          for i in 1 2 3; do git pull --rebase -q origin main && git push -q && break; sleep 5; done
+          for i in 1 2 3; do git pull --rebase --autostash -q origin main && git push -q && break; sleep 5; done
