@@ -16,7 +16,8 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 def get(path, method="GET", redirect=True):
     opener = urllib.request.build_opener() if redirect else urllib.request.build_opener(NoRedirect)
-    req = urllib.request.Request(url + path, method=method, data=b"" if method == "POST" else None)
+    req = urllib.request.Request(url + path, method=method, data=b"" if method == "POST" else None,
+                                 headers={"User-Agent": "Mozilla/5.0 (BoloCart deploy check)"})
     try:
         with opener.open(req, timeout=30) as r:
             return r.status, r.read().decode("utf-8", "replace"), dict(r.headers)
