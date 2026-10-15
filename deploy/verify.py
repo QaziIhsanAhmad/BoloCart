@@ -48,7 +48,13 @@ if secret:
     if c == 200:
         d = json.loads(b)
         out["stats"] = {k: d.get(k) for k in ("orders", "out_24h", "billing_7d")}
-        out["recent_events"] = [e.get("text", "")[:160] for e in (d.get("events_7d") or [])[:5]]
+        seen, ev = set(), []
+        for e in d.get("events_7d") or []:
+            t = f'{e.get("level")}: {e.get("text", "")[:200]}'
+            if t not in seen:
+                seen.add(t)
+                ev.append(t)
+        out["recent_events"] = ev[:15]
 ok = out.get("healthz") == 200 and out.get("mode") == "test" and out["demo_redirect_ok"] and out["webhook_rejects_bad_token"]
 out["state"] = "ok" if ok and out.get("webhook_verify_ok", True) else "check-failed"
 os.makedirs("deploy/status", exist_ok=True)
