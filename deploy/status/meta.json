@@ -1,24 +1,23 @@
 {
-  "at": "2026-10-15T17:23:44+00:00",
+  "at": "2026-10-15T17:30:37+00:00",
   "webhook_subscription": {
     "http": 200,
     "ok": true,
     "error": null
   },
   "waba_subscribed": {
-    "http": 400,
-    "ok": false,
-    "error": {
-      "message": "Error validating access token: Session has expired on Thursday, 15-Oct-26 09:00:00 PDT. The current time is Thursday, 15-Oct-26 10:23:44 PDT.",
-      "code": 190
-    }
+    "http": 200,
+    "ok": true,
+    "error": null
   },
-  "template": {
-    "http": 400,
-    "error": {
-      "message": "Error validating access token: Session has expired on Thursday, 15-Oct-26 09:00:00 PDT. The current time is Thursday, 15-Oct-26 10:23:44 PDT.",
-      "code": 190
+  "template": [
+    {
+      "name": "cod_order_confirm",
+      "status": "PENDING",
+      "category": "UTILITY",
+      "language": "ur",
+      "id": "1422342816015598"
     }
-  },
-  "state": "check-failed"
+  ],
+  "state": "connected"
 }

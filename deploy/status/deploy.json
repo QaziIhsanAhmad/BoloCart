@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-15T17:23:42+00:00",
+  "at": "2026-10-15T17:30:34+00:00",
   "host": "cloudflare-workers-free",
   "url": "https://bolocart.red-limit-875c.workers.dev",
   "webhook": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp",
@@ -21,7 +21,7 @@
     "Template submit failed: {\"error\":{\"message\":\"Error validating access token: Session has expired on Thursday, 15-Oct-26 09:00:00 PDT. The current time is Thursda",
     "Template submit failed: {\"error\":{\"message\":\"Error validating access token: Session has expired on Thursday, 15-Oct-26 09:00:00 PDT. The current time is Thursda",
     "Template submit failed: {\"error\":{\"message\":\"Error validating access token: Session has expired on Thursday, 15-Oct-26 09:00:00 PDT. The current time is Thursda",
-    "AI unavailable: AiError: 5028: @cf/meta/infire-llama-3.1-8b-instruct was deprecated on 2026-05-30. See the model catalog for alternatives: https://developers.cl"
+    "Template submit failed: {\"error\":{\"message\":\"Error validating access token: Session has expired on Thursday, 15-Oct-26 09:00:00 PDT. The current time is Thursda"
   ],
   "state": "ok"
 }
