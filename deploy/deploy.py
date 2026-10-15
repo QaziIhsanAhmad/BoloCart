@@ -40,7 +40,14 @@ if not tok:
 from huggingface_hub import HfApi  # noqa: E402
 
 api = HfApi(token=tok)
-user = api.whoami()["name"]
+step = "whoami"
+try:
+    user = api.whoami()["name"]
+except Exception as e:  # noqa: BLE001
+    out["state"] = "error"
+    out["error"] = {"step": step, "type": type(e).__name__, "message": str(e).replace(tok, "***")[:400]}
+    save()
+    raise SystemExit(1)
 repo = f"{user}/bolocart"
 url = f"https://{user.lower().replace('_', '-').replace('.', '-')}-bolocart.hf.space"
 seed = os.getenv("WA_APP_SECRET", "").strip() or tok
@@ -50,24 +57,35 @@ out.update({"space": f"https://huggingface.co/spaces/{repo}", "url": url,
             "demo": url + "/demo", "webhook": url + "/webhook/whatsapp"})
 
 if os.getenv("MODE", "deploy") == "deploy":
-    api.create_repo(repo, repo_type="space", space_sdk="docker", exist_ok=True, private=False)
-    for k in ("WA_TOKEN", "WA_PHONE_NUMBER_ID", "WA_WABA_ID", "WA_APP_SECRET", "TEST_RECIPIENTS"):
-        v = os.getenv(k, "").strip()
-        if v:
-            api.add_space_secret(repo, k, v)
-    api.add_space_secret(repo, "WA_VERIFY_TOKEN", verify)
-    api.add_space_secret(repo, "HEALTH_KEY", health)
-    # Cost guard is fixed here: test mode, live sending not approved.
-    for k, v in {"SEND_MODE": "test", "LIVE_APPROVED": "no", "MAX_TEMPLATES_PER_DAY": "20",
-                 "STORE_NAME": "Demo Store", "KB_PATH": "kb/demo.md",
-                 "OLLAMA_URL": "http://127.0.0.1:9", "PUBLIC_URL": url}.items():
-        api.add_space_variable(repo, k, v)
-    api.upload_folder(folder_path=".", repo_id=repo, repo_type="space",
-                      allow_patterns=["app/*.py", "kb/*.md", "demo/index.html", "requirements.txt",
-                                      "Dockerfile", "README.md"],
-                      commit_message="Deploy BoloCart from GitHub Actions")
-    api.restart_space(repo)
-    out["deployed"] = True
+    try:
+        step = "create_space"
+        api.create_repo(repo, repo_type="space", space_sdk="docker", exist_ok=True, private=False)
+        step = "space_secrets"
+        for k in ("WA_TOKEN", "WA_PHONE_NUMBER_ID", "WA_WABA_ID", "WA_APP_SECRET", "TEST_RECIPIENTS"):
+            v = os.getenv(k, "").strip()
+            if v:
+                api.add_space_secret(repo, k, v)
+        api.add_space_secret(repo, "WA_VERIFY_TOKEN", verify)
+        api.add_space_secret(repo, "HEALTH_KEY", health)
+        # Cost guard is fixed here: test mode, live sending not approved.
+        step = "space_variables"
+        for k, v in {"SEND_MODE": "test", "LIVE_APPROVED": "no", "MAX_TEMPLATES_PER_DAY": "20",
+                     "STORE_NAME": "Demo Store", "KB_PATH": "kb/demo.md",
+                     "OLLAMA_URL": "http://127.0.0.1:9", "PUBLIC_URL": url}.items():
+            api.add_space_variable(repo, k, v)
+        step = "upload"
+        api.upload_folder(folder_path=".", repo_id=repo, repo_type="space",
+                          allow_patterns=["app/*.py", "kb/*.md", "demo/index.html", "requirements.txt",
+                                          "Dockerfile", "README.md"],
+                          commit_message="Deploy BoloCart from GitHub Actions")
+        step = "restart"
+        api.restart_space(repo)
+        out["deployed"] = True
+    except Exception as e:  # noqa: BLE001
+        out["state"] = "error"
+        out["error"] = {"step": step, "type": type(e).__name__, "message": str(e).replace(tok, "***")[:400]}
+        save()
+        raise SystemExit(1)
 
 # Wait for the Space to build and answer (up to ~15 min)
 code, body = 0, ""
