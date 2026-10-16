@@ -1,11 +1,6 @@
 {
-  "at": "2026-10-16T06:03:55+00:00",
+  "at": "2026-10-16T06:05:44+00:00",
   "webhook_subscription": {
-    "http": 200,
-    "ok": true,
-    "error": null
-  },
-  "waba_unsubscribed": {
     "http": 200,
     "ok": true,
     "error": null
@@ -43,7 +38,7 @@
     {
       "id": "1142254138132873",
       "name": "BoloCart",
-      "override_callback_uri": null
+      "override_callback_uri": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp?route=waba"
     },
     {
       "id": "2202427980234937",
@@ -51,14 +46,6 @@
       "override_callback_uri": null
     }
   ],
-  "phone_subscribed": {
-    "http": 400,
-    "ok": false,
-    "error": {
-      "message": "Unsupported post request. Object with ID '1363482596856033' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api",
-      "code": 100
-    }
-  },
   "phone": {
     "display_phone_number": "+1 555-673-5885",
     "verified_name": "Test Number",
@@ -66,6 +53,7 @@
     "quality_rating": "GREEN",
     "code_verification_status": "VERIFIED",
     "webhook_configuration": {
+      "whatsapp_business_account": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp?route=waba",
       "application": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp"
     },
     "messaging_limit_tier": "TIER_250",
