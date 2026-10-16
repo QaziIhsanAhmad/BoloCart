@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-16T04:12:46+00:00",
+  "at": "2026-10-16T04:14:51+00:00",
   "webhook_subscription": {
     "http": 200,
     "ok": true,
@@ -19,5 +19,39 @@
       "id": "1422342816015598"
     }
   ],
+  "app_subscriptions": [
+    {
+      "object": "whatsapp_business_account",
+      "callback_url": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp",
+      "active": true,
+      "fields": [
+        "messages"
+      ]
+    }
+  ],
+  "waba_apps": [
+    {
+      "id": "1142254138132873",
+      "name": "Create app",
+      "override_callback_uri": null
+    },
+    {
+      "id": "2202427980234937",
+      "name": "WA DevX Webhook Events 1P App",
+      "override_callback_uri": null
+    }
+  ],
+  "phone": {
+    "display_phone_number": "+1 555-673-5885",
+    "verified_name": "Test Number",
+    "status": "CONNECTED",
+    "quality_rating": "UNKNOWN",
+    "code_verification_status": "VERIFIED",
+    "webhook_configuration": {
+      "application": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp"
+    },
+    "messaging_limit_tier": "TIER_250",
+    "id": "1363482596856033"
+  },
   "state": "connected"
 }
