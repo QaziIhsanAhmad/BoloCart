@@ -1,6 +1,11 @@
 {
-  "at": "2026-10-16T06:01:47+00:00",
+  "at": "2026-10-16T06:03:55+00:00",
   "webhook_subscription": {
+    "http": 200,
+    "ok": true,
+    "error": null
+  },
+  "waba_unsubscribed": {
     "http": 200,
     "ok": true,
     "error": null
@@ -46,6 +51,14 @@
       "override_callback_uri": null
     }
   ],
+  "phone_subscribed": {
+    "http": 400,
+    "ok": false,
+    "error": {
+      "message": "Unsupported post request. Object with ID '1363482596856033' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api",
+      "code": 100
+    }
+  },
   "phone": {
     "display_phone_number": "+1 555-673-5885",
     "verified_name": "Test Number",
