@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-16T06:05:44+00:00",
+  "at": "2026-10-16T06:07:46+00:00",
   "webhook_subscription": {
     "http": 200,
     "ok": true,
@@ -38,7 +38,7 @@
     {
       "id": "1142254138132873",
       "name": "BoloCart",
-      "override_callback_uri": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp?route=waba"
+      "override_callback_uri": null
     },
     {
       "id": "2202427980234937",
@@ -53,7 +53,6 @@
     "quality_rating": "GREEN",
     "code_verification_status": "VERIFIED",
     "webhook_configuration": {
-      "whatsapp_business_account": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp?route=waba",
       "application": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp"
     },
     "messaging_limit_tier": "TIER_250",
