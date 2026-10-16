@@ -43,7 +43,11 @@ else:
     if os.getenv("RESUBSCRIBE", "") == "true":
         c, r = call("DELETE", env["WA_WABA_ID"] + "/subscribed_apps", {"access_token": env["WA_TOKEN"]})
         out["waba_unsubscribed"] = {"http": c, "ok": bool(r.get("success")), "error": r.get("error")}
-    c, r = call("POST", env["WA_WABA_ID"] + "/subscribed_apps", {"access_token": env["WA_TOKEN"]})
+    sub = {"access_token": env["WA_TOKEN"]}
+    if os.getenv("OVERRIDE", "") == "true":
+        # Explicit per-WABA callback for this app (same Worker, tagged path) so Meta routes this account's events to us
+        sub.update({"override_callback_uri": env["BOLOCART_URL"] + "/webhook/whatsapp?route=waba", "verify_token": env["BOLOCART_VERIFY"]})
+    c, r = call("POST", env["WA_WABA_ID"] + "/subscribed_apps", sub)
     out["waba_subscribed"] = {"http": c, "ok": bool(r.get("success")), "error": r.get("error")}
     c, r = call("GET", env["WA_WABA_ID"] + "/message_templates",
                 {"name": "cod_order_confirm", "fields": "name,status,category,language", "access_token": env["WA_TOKEN"]})

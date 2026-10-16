@@ -9,6 +9,10 @@ on:
         description: "Re-register the WhatsApp account's webhook subscription"
         type: boolean
         default: false
+      override:
+        description: "Set a WABA-level override callback to the Worker"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -68,6 +72,7 @@ jobs:
         if: env.skip != '1'
         env:
           RESUBSCRIBE: ${{ inputs.resubscribe }}
+          OVERRIDE: ${{ inputs.override }}
           WA_PHONE_NUMBER_ID: ${{ secrets.WA_PHONE_NUMBER_ID }}
           WA_APP_ID: ${{ secrets.WA_APP_ID }}
           WA_APP_SECRET: ${{ secrets.WA_APP_SECRET }}
