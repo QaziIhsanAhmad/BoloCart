@@ -62,6 +62,7 @@ jobs:
       - name: Connect WhatsApp test number
         if: env.skip != '1'
         env:
+          WA_PHONE_NUMBER_ID: ${{ secrets.WA_PHONE_NUMBER_ID }}
           WA_APP_ID: ${{ secrets.WA_APP_ID }}
           WA_APP_SECRET: ${{ secrets.WA_APP_SECRET }}
           WA_TOKEN: ${{ secrets.WA_TOKEN }}

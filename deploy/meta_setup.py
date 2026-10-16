@@ -45,6 +45,18 @@ else:
     c, r = call("GET", env["WA_WABA_ID"] + "/message_templates",
                 {"name": "cod_order_confirm", "fields": "name,status,category,language", "access_token": env["WA_TOKEN"]})
     out["template"] = r.get("data") if c == 200 else {"http": c, "error": r.get("error")}
+    # Diagnostics (no secrets): where Meta will deliver webhooks for this number
+    c, r = call("GET", env["WA_APP_ID"] + "/subscriptions", {"access_token": app_token})
+    out["app_subscriptions"] = [{"object": x.get("object"), "callback_url": x.get("callback_url"), "active": x.get("active"),
+                                 "fields": [f.get("name") for f in x.get("fields", [])]} for x in r.get("data", [])] if c == 200 else {"http": c, "error": r.get("error")}
+    c, r = call("GET", env["WA_WABA_ID"] + "/subscribed_apps", {"access_token": env["WA_TOKEN"]})
+    out["waba_apps"] = [{"id": (x.get("whatsapp_business_api_data") or {}).get("id"), "name": (x.get("whatsapp_business_api_data") or {}).get("name"),
+                         "override_callback_uri": x.get("override_callback_uri")} for x in r.get("data", [])] if c == 200 else {"http": c, "error": r.get("error")}
+    pid = os.getenv("WA_PHONE_NUMBER_ID", "").strip()
+    if pid:
+        c, r = call("GET", pid, {"fields": "display_phone_number,verified_name,status,quality_rating,code_verification_status,webhook_configuration,messaging_limit_tier",
+                                 "access_token": env["WA_TOKEN"]})
+        out["phone"] = r if c == 200 else {"http": c, "error": r.get("error")}
     ok = out["webhook_subscription"]["ok"] and out["waba_subscribed"]["ok"]
     out["state"] = "connected" if ok else "check-failed"
 
