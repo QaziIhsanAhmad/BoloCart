@@ -58,6 +58,10 @@ else:
     out["waba_apps"] = [{"id": (x.get("whatsapp_business_api_data") or {}).get("id"), "name": (x.get("whatsapp_business_api_data") or {}).get("name"),
                          "override_callback_uri": x.get("override_callback_uri")} for x in r.get("data", [])] if c == 200 else {"http": c, "error": r.get("error")}
     pid = os.getenv("WA_PHONE_NUMBER_ID", "").strip()
+    if pid and os.getenv("RESUBSCRIBE", "") == "true":
+        # Reported workaround: subscribe the app on the phone-number asset as well as the WABA
+        c, r = call("POST", pid + "/subscribed_apps", {"access_token": env["WA_TOKEN"]})
+        out["phone_subscribed"] = {"http": c, "ok": bool(r.get("success")), "error": r.get("error")}
     if pid:
         c, r = call("GET", pid, {"fields": "display_phone_number,verified_name,status,quality_rating,code_verification_status,webhook_configuration,messaging_limit_tier",
                                  "access_token": env["WA_TOKEN"]})
