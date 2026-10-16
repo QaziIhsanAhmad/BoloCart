@@ -55,6 +55,26 @@ if secret:
                 seen.add(t)
                 ev.append(t)
         out["recent_events"] = ev[:15]
+# Edge checks: can Meta's webhook user-agent reach the Worker, and does a rejected POST get logged?
+def probe(ua, method="GET", path="/healthz", body=None):
+    req = urllib.request.Request(url + path, method=method, data=body, headers={"User-Agent": ua, "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return r.status
+    except urllib.error.HTTPError as e:
+        return e.code
+    except Exception as e:  # noqa: BLE001
+        return type(e).__name__
+out["edge"] = {
+    "get_ua_facebookexternalua": probe("facebookexternalua"),
+    "get_ua_python": probe("Python-urllib/3.12"),
+    "post_webhook_bad_sig_as_meta": probe("facebookexternalua", "POST", "/webhook/whatsapp", b'{"probe":1}'),
+}
+if secret:
+    time.sleep(2)
+    c, b, _h = get(f"/healthz?key={derive('health')}")
+    if c == 200:
+        out["edge"]["rejection_logged"] = any("Webhook POST rejected" in (e.get("text") or "") for e in json.loads(b).get("events_7d") or [])
 ok = out.get("healthz") == 200 and out.get("mode") == "test" and out["demo_redirect_ok"] and out["webhook_rejects_bad_token"]
 out["state"] = "ok" if ok and out.get("webhook_verify_ok", True) else "check-failed"
 os.makedirs("deploy/status", exist_ok=True)
