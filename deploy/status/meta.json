@@ -1,11 +1,6 @@
 {
-  "at": "2026-10-16T05:42:00+00:00",
+  "at": "2026-10-16T06:01:47+00:00",
   "webhook_subscription": {
-    "http": 200,
-    "ok": true,
-    "error": null
-  },
-  "waba_unsubscribed": {
     "http": 200,
     "ok": true,
     "error": null
