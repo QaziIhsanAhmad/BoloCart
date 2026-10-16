@@ -26,3 +26,6 @@ binding = "AI"
 
 [triggers]
 crons = ["17 * * * *"]   # hourly: mark unanswered orders as no-reply
+
+[observability]
+enabled = true   # Workers Logs (free plan): every request that reaches the Worker
