@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-16T04:14:49+00:00",
+  "at": "2026-10-16T04:26:19+00:00",
   "host": "cloudflare-workers-free",
   "url": "https://bolocart.red-limit-875c.workers.dev",
   "webhook": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp",
@@ -26,5 +26,11 @@
     "needs_human: 923019677488: Salam,anti acne serum ki price kia hai?",
     "error: WhatsApp send failed 401: {\"error\":{\"message\":\"Authentication Error\",\"code\":190,\"type\":\"OAuthException\",\"fbtrace_id\":\"Aa-kGqlSfDbEapGE0XOekHG\"}}"
   ],
+  "edge": {
+    "get_ua_facebookexternalua": 200,
+    "get_ua_python": 403,
+    "post_webhook_bad_sig_as_meta": 401,
+    "rejection_logged": true
+  },
   "state": "ok"
 }
