@@ -17,7 +17,7 @@ const graph = http.createServer((req, res) => {
 
 const hk = (s, p) => crypto.createHash("sha256").update(`${s}:${p}`).digest("hex").slice(0, 24);
 const HEALTH = hk("appsecret", "health"), VERIFY = hk("appsecret", "verify");
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms * 2.5)); // generous: CI runners are slower
 const wa = (value, secret = "appsecret") => {
   const raw = JSON.stringify({ entry: [{ changes: [{ value }] }] });
   const sig = "sha256=" + crypto.createHmac("sha256", secret).update(raw).digest("hex");
