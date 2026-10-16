@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-16T05:08:43+00:00",
+  "at": "2026-10-16T05:10:48+00:00",
   "host": "cloudflare-workers-free",
   "url": "https://bolocart.red-limit-875c.workers.dev",
   "webhook": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp",
@@ -36,6 +36,7 @@
     "rejection_logged": true
   },
   "webhook_log": [
+    "10-16 05:10Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
     "10-16 05:08Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
     "10-16 05:02Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
     "10-16 04:59Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
