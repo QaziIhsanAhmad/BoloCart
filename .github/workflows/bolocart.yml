@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      resubscribe:
+        description: "Re-register the WhatsApp account's webhook subscription"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -62,6 +67,7 @@ jobs:
       - name: Connect WhatsApp test number
         if: env.skip != '1'
         env:
+          RESUBSCRIBE: ${{ inputs.resubscribe }}
           WA_PHONE_NUMBER_ID: ${{ secrets.WA_PHONE_NUMBER_ID }}
           WA_APP_ID: ${{ secrets.WA_APP_ID }}
           WA_APP_SECRET: ${{ secrets.WA_APP_SECRET }}

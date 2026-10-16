@@ -40,6 +40,9 @@ else:
         "object": "whatsapp_business_account", "callback_url": env["BOLOCART_URL"] + "/webhook/whatsapp",
         "verify_token": env["BOLOCART_VERIFY"], "fields": "messages", "access_token": app_token})
     out["webhook_subscription"] = {"http": c, "ok": bool(r.get("success")), "error": r.get("error")}
+    if os.getenv("RESUBSCRIBE", "") == "true":
+        c, r = call("DELETE", env["WA_WABA_ID"] + "/subscribed_apps", {"access_token": env["WA_TOKEN"]})
+        out["waba_unsubscribed"] = {"http": c, "ok": bool(r.get("success")), "error": r.get("error")}
     c, r = call("POST", env["WA_WABA_ID"] + "/subscribed_apps", {"access_token": env["WA_TOKEN"]})
     out["waba_subscribed"] = {"http": c, "ok": bool(r.get("success")), "error": r.get("error")}
     c, r = call("GET", env["WA_WABA_ID"] + "/message_templates",
