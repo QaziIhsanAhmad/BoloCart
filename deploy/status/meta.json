@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-16T05:10:52+00:00",
+  "at": "2026-10-16T05:12:43+00:00",
   "webhook_subscription": {
     "http": 200,
     "ok": true,
@@ -45,7 +45,7 @@
     "display_phone_number": "+1 555-673-5885",
     "verified_name": "Test Number",
     "status": "CONNECTED",
-    "quality_rating": "UNKNOWN",
+    "quality_rating": "GREEN",
     "code_verification_status": "VERIFIED",
     "webhook_configuration": {
       "application": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp"
