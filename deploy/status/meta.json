@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-16T05:20:48+00:00",
+  "at": "2026-10-16T05:40:10+00:00",
   "webhook_subscription": {
     "http": 200,
     "ok": true,
@@ -32,7 +32,7 @@
   "waba_apps": [
     {
       "id": "1142254138132873",
-      "name": "Create app",
+      "name": "BoloCart",
       "override_callback_uri": null
     },
     {
