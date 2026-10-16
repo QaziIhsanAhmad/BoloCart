@@ -48,6 +48,8 @@ else:
     c, r = call("GET", env["WA_WABA_ID"] + "/message_templates",
                 {"name": "cod_order_confirm", "fields": "name,status,category,language", "access_token": env["WA_TOKEN"]})
     out["template"] = r.get("data") if c == 200 else {"http": c, "error": r.get("error")}
+    c, r = call("GET", env["WA_APP_ID"], {"fields": "name,category,privacy_policy_url", "access_token": app_token})
+    out["app"] = r if c == 200 else {"http": c, "error": r.get("error")}
     # Diagnostics (no secrets): where Meta will deliver webhooks for this number
     c, r = call("GET", env["WA_APP_ID"] + "/subscriptions", {"access_token": app_token})
     out["app_subscriptions"] = [{"object": x.get("object"), "callback_url": x.get("callback_url"), "active": x.get("active"),
