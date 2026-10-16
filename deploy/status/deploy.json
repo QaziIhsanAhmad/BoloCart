@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-16T05:40:06+00:00",
+  "at": "2026-10-16T05:41:56+00:00",
   "host": "cloudflare-workers-free",
   "url": "https://bolocart.red-limit-875c.workers.dev",
   "webhook": "https://bolocart.red-limit-875c.workers.dev/webhook/whatsapp",
@@ -26,8 +26,7 @@
     "error: Template submit failed: {\"error\":{\"message\":\"Error validating access token: Session has expired on Thursday, 15-Oct-26 09:00:00 PDT. The current time is Thursday, 15-Oct-26 10:11:32 PDT.\",\"type\":\"OAut",
     "error: Template submit failed: {\"error\":{\"message\":\"Error validating access token: Session has expired on Thursday, 15-Oct-26 09:00:00 PDT. The current time is Thursday, 15-Oct-26 10:09:02 PDT.\",\"type\":\"OAut",
     "error: AI unavailable: AiError: 5028: @cf/meta/infire-llama-3.1-8b-instruct was deprecated on 2026-05-30. See the model catalog for alternatives: https://developers.cloudflare.com/workers-ai/models/",
-    "needs_human: 923019677488: Salam,anti acne serum ki price kia hai?",
-    "error: WhatsApp send failed 401: {\"error\":{\"message\":\"Authentication Error\",\"code\":190,\"type\":\"OAuthException\",\"fbtrace_id\":\"Aa-kGqlSfDbEapGE0XOekHG\"}}"
+    "needs_human: 923019677488: Salam,anti acne serum ki price kia hai?"
   ],
   "edge": {
     "get_ua_facebookexternalua": 200,
@@ -36,6 +35,7 @@
     "rejection_logged": true
   },
   "webhook_log": [
+    "10-16 05:41Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
     "10-16 05:40Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
     "10-16 05:20Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
     "10-16 05:12Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
@@ -46,8 +46,7 @@
     "10-16 04:58Z info: Webhook received: 1 message(s), 0 status update(s)",
     "10-16 04:56Z info: Webhook received: 1 message(s), 0 status update(s)",
     "10-16 04:52Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
-    "10-16 04:31Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)",
-    "10-16 04:28Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)"
+    "10-16 04:31Z warn: Webhook POST rejected: bad signature (11 bytes, ua=facebookexternalua)"
   ],
   "state": "ok"
 }

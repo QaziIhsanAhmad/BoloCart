@@ -1,6 +1,11 @@
 {
-  "at": "2026-10-16T05:40:10+00:00",
+  "at": "2026-10-16T05:42:00+00:00",
   "webhook_subscription": {
+    "http": 200,
+    "ok": true,
+    "error": null
+  },
+  "waba_unsubscribed": {
     "http": 200,
     "ok": true,
     "error": null
@@ -19,6 +24,11 @@
       "id": "1422342816015598"
     }
   ],
+  "app": {
+    "name": "BoloCart",
+    "privacy_policy_url": "https://qaziihsanahmad.github.io/BoloCart/privacy/",
+    "id": "1142254138132873"
+  },
   "app_subscriptions": [
     {
       "object": "whatsapp_business_account",
