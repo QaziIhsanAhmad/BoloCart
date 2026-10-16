@@ -74,7 +74,10 @@ if secret:
     time.sleep(2)
     c, b, _h = get(f"/healthz?key={derive('health')}")
     if c == 200:
-        out["edge"]["rejection_logged"] = any("Webhook POST rejected" in (e.get("text") or "") for e in json.loads(b).get("events_7d") or [])
+        evs = json.loads(b).get("events_7d") or []
+        out["edge"]["rejection_logged"] = any("Webhook POST rejected" in (e.get("text") or "") for e in evs)
+        out["webhook_log"] = [f'{datetime.datetime.fromtimestamp(e["ts"], datetime.timezone.utc):%m-%d %H:%M}Z {e.get("level")}: {(e.get("text") or "")[:120]}'
+                              for e in evs if (e.get("level") in ("info", "warn", "needs_human"))][:12]
 ok = out.get("healthz") == 200 and out.get("mode") == "test" and out["demo_redirect_ok"] and out["webhook_rejects_bad_token"]
 out["state"] = "ok" if ok and out.get("webhook_verify_ok", True) else "check-failed"
 os.makedirs("deploy/status", exist_ok=True)
